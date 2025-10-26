@@ -1,1 +1,309 @@
-
+views:
+  - title: Übersicht
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Daikin Steuerung
+            heading_style: title
+          - type: tile
+            entity: switch.dk_heizen
+          - type: tile
+            entity: switch.dk_warmwasser
+            features_position: bottom
+            vertical: false
+          - type: tile
+            entity: switch.dk_silent
+          - type: tile
+            entity: switch.dk_warmwasser_zusatzheizung
+          - type: tile
+            entity: binary_sensor.dk_heizt
+            features_position: bottom
+            vertical: false
+          - type: tile
+            entity: sensor.dk_wp_laufzeit_daily
+            features_position: bottom
+            vertical: false
+          - type: tile
+            entity: sensor.dk_desinfektion
+          - type: tile
+            entity: sensor.dk_zusatzheizung
+          - type: entities
+            entities:
+              - entity: input_select.set_dk_smartgrid
+          - type: thermostat
+            entity: climate.dk_thermostat
+          - type: thermostat
+            entity: climate.dk_wassertemperatur
+      - type: grid
+        cards:
+          - type: heading
+            heading: Analyse
+            heading_style: title
+          - type: entities
+            entities:
+              - entity: sensor.dk_lufttemperatur_aussen
+              - entity: sensor.dk_vorlauftemperatur_phe
+              - entity: sensor.dk_ruecklauftemperatur
+              - entity: sensor.dk_spreizung
+              - entity: sensor.dk_durchflussrate
+          - type: entities
+            entities:
+              - entity: sensor.em3_wp_totalpower
+              - entity: sensor.dk_stromverbrauch_waermepumpe
+              - entity: sensor.dk_heizleistung_berechnet
+              - entity: sensor.dk_heizenergie_daily
+              - entity: sensor.dk_heizenergie_monthly
+              - entity: sensor.dk_cop
+              - entity: sensor.dk_cop_daily
+              - entity: sensor.dk_cop_monthly
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+            heading: Smart Grid
+          - type: entities
+            entities:
+              - entity: sensor.dk_smart_grid_leistungsbegrenzung_puffer_sensor
+              - entity: sensor.dk_smart_grid_leistungsbegrenzung_sensor
+              - entity: sensor.dk_smart_grid_modus_sensor
+              - entity: input_number.set_dk_power_limit_puffer
+              - entity: input_number.set_dk_power_limit
+          - type: heading
+            heading: Übersicht
+            heading_style: title
+          - type: tile
+            entity: sensor.dk_3_wege_ventil
+          - type: tile
+            entity: sensor.dk_betriebsart
+          - type: tile
+            entity: sensor.dk_brauchwasserbetrieb
+          - type: tile
+            entity: sensor.dk_cop
+          - type: tile
+            entity: sensor.dk_cop_daily
+          - type: tile
+            entity: sensor.dk_cop_monthly
+          - type: tile
+            entity: sensor.dk_desinfektion
+          - type: tile
+            entity: sensor.dk_durchflussrate
+          - type: tile
+            entity: sensor.dk_enteisung
+          - type: tile
+            entity: sensor.dk_fehler
+          - type: tile
+            entity: sensor.dk_fehlercode
+          - type: tile
+            entity: sensor.dk_fehlersubcode
+          - type: tile
+            entity: switch.dk_heizen
+          - type: tile
+            entity: sensor.dk_heizenergie_daily
+          - type: tile
+            entity: sensor.dk_heizenergie_helper
+          - type: tile
+            entity: sensor.dk_heizenergie_monthly
+          - type: tile
+            entity: sensor.dk_heizleistung_berechnet
+          - type: tile
+            entity: binary_sensor.dk_heizt
+          - type: tile
+            entity: sensor.dk_heizungsbetrieb
+          - type: tile
+            entity: sensor.dk_kaeltemittel_temperatur
+          - type: tile
+            entity: sensor.dk_wp_laufzeit_daily
+          - type: tile
+            entity: sensor.dk_lufttemperatur_aussen
+          - type: tile
+            entity: input_select.set_dk_modus
+          - type: tile
+            entity: sensor.dk_modus_sensor
+          - type: tile
+            entity: input_number.set_dk_power_limit_puffer
+          - type: tile
+            entity: input_number.set_dk_power_limit
+          - type: tile
+            entity: sensor.dk_regler_temperatur
+          - type: tile
+            entity: sensor.dk_ruecklauftemperatur
+          - type: tile
+            entity: switch.dk_silent
+          - type: tile
+            entity: input_select.set_dk_smartgrid
+          - type: tile
+            entity: sensor.dk_smart_grid_leistungsbegrenzung_puffer_sensor
+          - type: tile
+            entity: sensor.dk_smart_grid_leistungsbegrenzung_sensor
+          - type: tile
+            entity: sensor.dk_smart_grid_modus_sensor
+          - type: tile
+            entity: sensor.dk_sollwert_heizen_sensor
+          - type: tile
+            entity: sensor.dk_sollwert_warmwasser_sensor
+          - type: tile
+            entity: sensor.dk_spreizung
+          - type: tile
+            entity: automation.dk_start_counter_increment
+          - type: tile
+            entity: counter.dk_starts
+          - type: tile
+            entity: sensor.dk_starts_daily
+          - type: tile
+            entity: sensor.dk_starts_monthly
+          - type: tile
+            entity: sensor.dk_stromverbrauch_waermepumpe
+          - type: tile
+            entity: climate.dk_thermostat
+          - type: tile
+            entity: sensor.dk_verdichter
+          - type: tile
+            entity: sensor.dk_vorlauftemperatur_buh
+          - type: tile
+            entity: sensor.dk_vorlauftemperatur_phe
+          - type: tile
+            entity: sensor.dk_warmstart
+          - type: tile
+            entity: switch.dk_warmwasser
+          - type: tile
+            entity: sensor.dk_warmwasser_temperatur
+          - type: tile
+            entity: switch.dk_warmwasser_zusatzheizung
+          - type: tile
+            entity: climate.dk_wassertemperatur
+          - type: tile
+            entity: sensor.dk_zirkulationspumpe
+          - type: tile
+            entity: sensor.dk_zusatzheizung
+    type: sections
+    max_columns: 4
+  - type: sections
+    max_columns: 4
+    title: Diag
+    path: diag
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+            heading: Diagramme
+          - type: history-graph
+            entities:
+              - entity: sensor.dk_vorlauftemperatur_phe
+              - entity: sensor.dk_ruecklauftemperatur
+              - entity: sensor.dk_warmwasser_temperatur
+            max_y_axis: 60
+          - type: history-graph
+            entities:
+              - entity: sensor.dk_spreizung
+              - entity: sensor.dk_regler_temperatur
+              - entity: sensor.dk_sollwert_heizen_sensor
+              - entity: sensor.dk_lufttemperatur_aussen
+            min_y_axis: 0
+            max_y_axis: 28
+          - type: history-graph
+            entities:
+              - entity: sensor.em3_wp_totalpower
+              - entity: sensor.dk_heizleistung_berechnet
+              - entity: sensor.dk_stromverbrauch_waermepumpe
+            max_y_axis: 20000
+            logarithmic_scale: true
+          - type: history-graph
+            entities:
+              - entity: sensor.dk_durchflussrate
+            max_y_axis: 33
+          - type: history-graph
+            entities:
+              - entity: sensor.dk_cop
+            min_y_axis: 0
+            max_y_axis: 10
+            hours_to_show: 24
+  - type: sections
+    max_columns: 4
+    title: Stats
+    path: daten
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading_style: title
+            heading: Statistiken
+          - type: history-graph
+            entities:
+              - entity: binary_sensor.dk_heizt
+              - entity: sensor.dk_enteisung
+              - entity: sensor.dk_3_wege_ventil
+              - entity: sensor.dk_verdichter
+          - chart_type: bar
+            period: day
+            type: statistics-graph
+            entities:
+              - sensor.em3_wp_energy_daily
+              - sensor.dk_heizenergie_daily
+            stat_types:
+              - state
+            days_to_show: 7
+            title: Wärmepumpe Energie Tag
+            min_y_axis: 0
+          - chart_type: bar
+            period: month
+            type: statistics-graph
+            entities:
+              - sensor.em3_wp_energy_monthly
+              - sensor.dk_heizenergie_monthly
+            stat_types:
+              - state
+            title: Wärmepumpe Energie Monat
+            min_y_axis: 0
+            days_to_show: 365
+          - chart_type: bar
+            period: day
+            type: statistics-graph
+            entities:
+              - sensor.dk_starts_daily
+            stat_types:
+              - state
+            days_to_show: 7
+            title: Wärmepumpe Starts Tag
+            min_y_axis: 0
+          - chart_type: bar
+            period: month
+            type: statistics-graph
+            entities:
+              - sensor.dk_starts_monthly
+            stat_types:
+              - state
+            title: Wärmepumpe Starts Monat
+            min_y_axis: 0
+          - chart_type: bar
+            period: day
+            type: statistics-graph
+            entities:
+              - sensor.dk_cop_daily
+            days_to_show: 7
+            title: Wärmepumpe COP Tag
+            min_y_axis: 0
+            stat_types:
+              - max
+          - chart_type: bar
+            period: month
+            type: statistics-graph
+            entities:
+              - sensor.dk_cop_monthly
+            title: Wärmepumpe COP Monat
+            min_y_axis: 0
+            stat_types:
+              - max
+            days_to_show: 365
+          - chart_type: bar
+            period: day
+            type: statistics-graph
+            entities:
+              - sensor.dk_wp_laufzeit_daily
+            days_to_show: 7
+            title: Wärmepumpe Laufzeit Tag
+            min_y_axis: 0
+            stat_types:
+              - max
+    cards: []
