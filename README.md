@@ -1,5 +1,3 @@
-# daikin-home-hub-modbus-home-assistant
-
 # Daikin Home Hub Modbus Home Assistant Integration
 
 ## Purpose / Zweck
@@ -28,36 +26,48 @@ Dieses Projekt stellt eine benutzerdefinierte Home Assistant-Integration für da
 
 **English:**  
 1. **Installation**
-    - Copy the `custom_components/daikin_home_hub_modbus` directory into your Home Assistant `custom_components` folder.
+    - Copy the `packages` directory into your Home Assistant `config` folder.
 
 2. **Configuration**
     - Add the integration to your `configuration.yaml`:
     ```yaml
-    daikin_home_hub_modbus:
-      host: 192.168.1.x
-      port: 502
-      # Add other Modbus and device options as required
+    homeassistant:
+    packages: !include_dir_merge_named packages/
+    ```
+    - check that file "daikin.yaml" is given in subfolder packages/modbus/
+    - Add the integration to your `secrets.yaml` and edit ip address (port & slave usually fits):
+    ```yaml
+    daikin_modbus_host_ip: 192.xxx.xxx.xxx # TODO update with the IP of your homehub. No default. Check your router.
+    daikin_modbus_port: 502 # TODO update with the Modbus port of your homehub. Default is '502'
+    daikin_modbus_slave: 1 #TODO update with the slave address of your homehub. Default is '1'
     ```
     - Restart Home Assistant.
 
 3. **Entities and Controls**
     - After setup, Daikin device data and controls will be available as Home Assistant entities.
     - You can automate, monitor, and control your HVAC system through the Home Assistant UI.
+    - You can use the dashboard from `dashboards` as a starting point.
 
 **Deutsch:**  
 1. **Installation**
-    - Kopiere das Verzeichnis `custom_components/daikin_home_hub_modbus` in deinen Home Assistant-Ordner `custom_components`.
+    - Kopiere das Verzeichnis `packages` in deinen Home Assistant-Ordner `config`.
 
 2. **Konfiguration**
     - Füge die Integration zu deiner `configuration.yaml` hinzu:
     ```yaml
-    daikin_home_hub_modbus:
-      host: 192.168.1.x
-      port: 502
-      # Füge weitere Modbus- und Geräteoptionen nach Bedarf hinzu
+    homeassistant:
+    packages: !include_dir_merge_named packages/
+    ```
+    - pürfe ob sich die Datei "daikin.yaml" im Unterordner packages/modbus/ befindet
+    - Füge in der `secrets.yaml` die IP Adresse des Home Hubs zu (port & slave optional anpassen):
+    ```yaml
+    daikin_modbus_host_ip: 192.xxx.xxx.xxx # TODO update with the IP of your homehub. No default. Check your router.
+    daikin_modbus_port: 502 # TODO update with the Modbus port of your homehub. Default is '502'
+    daikin_modbus_slave: 1 #TODO update with the slave address of your homehub. Default is '1'
     ```
     - Starte Home Assistant neu.
 
 3. **Entitäten und Steuerungen**
     - Nach der Einrichtung sind Daikin-Gerätedaten und Steuerungen als Home Assistant-Entitäten verfügbar.
     - Du kannst dein Klimasystem über die Home Assistant-Oberfläche automatisieren, überwachen und steuern.
+    - Du kannst das Dashboard unter `dashboards` verwenden.
