@@ -1,0 +1,4 @@
+
+# Add this line to your configuration yaml to work with packages. Daikin Modbus can be fount within this folder structure
+homeassistant:
+  packages: !include_dir_merge_named packages/
