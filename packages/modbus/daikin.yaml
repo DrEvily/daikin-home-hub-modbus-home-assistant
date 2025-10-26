@@ -1,1 +1,681 @@
+# Home Assistant Daikin HomeHub integration
+# https://github.com/
+# by Stefan Twieg
+#
+# last update: 2025-03-17
+#
+# Note: This YAML file will only work with Home Assistant >= 2024.10
 
+modbus_daikin:
+  modbus:
+    - name: DKHomeHub
+      type: tcp
+      host: !secret daikin_modbus_host_ip
+      port: !secret daikin_modbus_port
+      delay: 5
+      timeout: 10
+
+      climates:
+        - name: DK Thermostat
+          unique_id: daikin_thermostat
+          device_address: !secret daikin_modbus_slave
+          address: 49  # 50 Beispiel-Adresse für Ist-temperatur
+          input_type: input
+          data_type: int16
+          temperature_unit: C
+          scale: 1
+          precision: 1
+          max_temp: 30
+          min_temp: 12
+          target_temp_register: 5  # 6 Adresse für Zieltemperatur
+          temp_step: 1
+          hvac_mode_register:  
+            address: 2 #Reg 3
+            values:
+                state_auto: 0
+                state_heat: 1
+                state_cool: 2
+          hvac_onoff_register: 3 # reg 4
+
+        - name: DK Wassertemperatur
+          unique_id: daikin_wassertemperatur
+          device_address: !secret daikin_modbus_slave
+          address: 42  # 43 Beispiel-Adresse für Ist-temperatur
+          input_type: input
+          data_type: int16
+          temperature_unit: C
+          scale: 1
+          precision: 1
+          max_temp: 60
+          min_temp: 12
+          target_temp_register: 9  # 10 Adresse für Zieltemperatur
+          temp_step: 1
+          hvac_onoff_register: 11 # reg 12
+    
+
+      switches:
+        - name: DK Heizen
+          unique_id: daikin_switch_heizen
+          device_address: !secret daikin_modbus_slave
+          address: 3  # reg 4 Beispiel-Adresse für Heizen EIN/AUS
+          write_type: holding
+          scan_interval: 10
+          verify:
+            input_type: holding
+            address: 3  # reg 4
+            state_on: 1
+            state_off: 0
+        
+        - name: DK Warmwasser
+          unique_id: daikin_switch_warmwasser
+          device_address: !secret daikin_modbus_slave
+          address: 11 # reg 12
+          write_type: holding
+          scan_interval: 10
+          verify:
+            input_type: holding
+            address: 11 # reg 12
+            state_on: 1
+            state_off: 0
+
+        - name: DK Warmwasser Zusatzheizung
+          unique_id: daikin_switch_wasser_zusatzheizung
+          device_address: !secret daikin_modbus_slave
+          address: 12 # reg 13
+          write_type: holding
+          scan_interval: 10
+          verify:
+            input_type: holding
+            address: 12 # reg 13
+            state_on: 1
+            state_off: 0
+
+        - name: DK Silent
+          unique_id: daikin_switch_silent
+          device_address: !secret daikin_modbus_slave
+          address: 8 # reg 9
+          write_type: holding
+          scan_interval: 10
+          verify:
+            input_type: holding
+            address: 8 # reg 9
+            state_on: 1
+            state_off: 0
+
+      sensors:
+        #read holding registers
+        - name: DK Sollwert Heizen Sensor
+          unique_id: daikin_sollwert_heizen_sensor
+          device_address: !secret daikin_modbus_slave
+          address: 5 # reg 6
+          input_type: holding
+          data_type: int16
+          precision: 1
+          unit_of_measurement: °C
+          device_class: Temperature
+          state_class: measurement
+          scale: 1
+          scan_interval: 10
+
+        - name: DK Sollwert Warmwasser Sensor
+          unique_id: daikin_sollwert_warmwasser_sensor
+          device_address: !secret daikin_modbus_slave
+          address: 9 # reg 10
+          input_type: holding
+          data_type: int16
+          precision: 1
+          unit_of_measurement: °C
+          device_class: Temperature
+          state_class: measurement
+          scale: 1
+          scan_interval: 10
+
+        - name: DK Modus Sensor
+          unique_id: daikin_modus_sensor
+          device_address: !secret daikin_modbus_slave
+          address: 2 # reg 3
+          input_type: holding
+          data_type: int16
+          state_class: measurement
+          scan_interval: 10
+        
+        - name: DK Smart Grid Modus Sensor
+          unique_id: daikin_smart_grid_sensor
+          device_address: !secret daikin_modbus_slave
+          address: 55 # reg 56
+          input_type: holding
+          data_type: int16
+          state_class: measurement
+          scan_interval: 10
+
+        - name: DK Smart Grid Leistungsbegrenzung Puffer Sensor
+          unique_id: daikin_smart_grid_leistungsbegrenzung_puffer_sensor
+          device_address: !secret daikin_modbus_slave
+          address: 56 # reg 57
+          input_type: holding
+          data_type: int16
+          state_class: measurement
+          unit_of_measurement: W
+          scale: 10
+          scan_interval: 10
+
+        - name: DK Smart Grid Leistungsbegrenzung Sensor
+          unique_id: daikin_smart_grid_leistungsbegrenzung_sensor
+          device_address: !secret daikin_modbus_slave
+          address: 57 # reg 58
+          input_type: holding
+          data_type: int16
+          state_class: measurement
+          unit_of_measurement: W
+          scale: 10
+          scan_interval: 10
+        
+        #read input registers
+        - name: DK Fehler
+          unique_id: daikin_fehler
+          device_address: !secret daikin_modbus_slave
+          address: 20 # reg 21
+          input_type: input
+          data_type: int16
+          scan_interval: 10
+
+        - name: DK FehlerCode
+          unique_id: daikin_fehlercode
+          device_address: !secret daikin_modbus_slave
+          address: 21 # reg 22
+          input_type: input
+          data_type: string
+          count: 2
+          scan_interval: 10
+
+        - name: DK FehlerSubCode
+          unique_id: daikin_fehlersubcode
+          device_address: !secret daikin_modbus_slave
+          address: 22 # reg 23
+          input_type: input
+          data_type: int16
+          scan_interval: 10
+
+        - name: DK Zirkulationspumpe
+          unique_id: daikin_zirkulationspumpe
+          device_address: !secret daikin_modbus_slave
+          address: 29 # reg 30
+          input_type: input
+          data_type: int16
+          scan_interval: 10
+
+        - name: DK Verdichter
+          unique_id: daikin_verdichter
+          device_address: !secret daikin_modbus_slave
+          address: 30 # reg 31
+          input_type: input
+          data_type: int16
+          scan_interval: 10
+
+        - name: DK Zusatzheizung
+          unique_id: daikin_zusatzheizung
+          device_address: !secret daikin_modbus_slave
+          address: 31 # reg 32
+          input_type: input
+          data_type: int16
+          scan_interval: 10
+
+        - name: DK Desinfektion
+          unique_id: daikin_desinfektion
+          device_address: !secret daikin_modbus_slave
+          address: 32 # reg 33
+          input_type: input
+          data_type: int16
+          scan_interval: 10
+
+        - name: DK Enteisung
+          unique_id: daikin_enteisung
+          device_address: !secret daikin_modbus_slave
+          address: 34 # reg 35
+          input_type: input
+          data_type: int16
+          scan_interval: 10
+
+        - name: DK Warmstart
+          unique_id: daikin_warmstart
+          device_address: !secret daikin_modbus_slave
+          address: 35 # reg 36
+          input_type: input
+          data_type: int16
+          scan_interval: 10
+
+        - name: DK 3 Wege Ventil
+          unique_id: daikin_3wegeventil
+          device_address: !secret daikin_modbus_slave
+          address: 36 # reg 37
+          input_type: input
+          data_type: int16
+          scan_interval: 10
+
+        - name: DK Betriebsart
+          unique_id: daikin_betriebsart
+          device_address: !secret daikin_modbus_slave
+          address: 37 # reg 38
+          input_type: input
+          data_type: int16
+          scan_interval: 10
+
+        - name: DK Vorlauftemperatur PHE
+          unique_id: daikin_vorlauftemperatur_phe
+          device_address: !secret daikin_modbus_slave
+          address: 39 # reg 40
+          input_type: input
+          data_type: int16
+          precision: 1
+          unit_of_measurement: °C
+          device_class: Temperature
+          state_class: measurement
+          scale: 0.01
+          scan_interval: 10
+
+        - name: DK Vorlauftemperatur BUH
+          unique_id: daikin_vorlauftemperatur_buh
+          device_address: !secret daikin_modbus_slave
+          address: 40 # reg 41
+          input_type: input
+          data_type: int16
+          precision: 1
+          unit_of_measurement: °C
+          device_class: Temperature
+          state_class: measurement
+          scale: 0.01
+          scan_interval: 10
+
+        - name: DK Ruecklauftemperatur
+          unique_id: daikin_ruecklauftemperatur
+          device_address: !secret daikin_modbus_slave
+          address: 41 # reg 42
+          input_type: input
+          data_type: int16
+          precision: 1
+          unit_of_measurement: °C
+          device_class: Temperature
+          state_class: measurement
+          scale: 0.01
+          scan_interval: 10
+
+        - name: DK Warmwasser Temperatur
+          unique_id: daikin_warmwasser_temp
+          device_address: !secret daikin_modbus_slave
+          address: 42 # reg 43
+          input_type: input
+          data_type: int16
+          precision: 1
+          unit_of_measurement: °C
+          device_class: Temperature
+          state_class: measurement
+          scale: 0.01
+          scan_interval: 10
+
+        - name: DK Lufttemperatur Außen
+          unique_id: daikin_lufttemperatur_außen
+          device_address: !secret daikin_modbus_slave
+          address: 43 # reg 44
+          input_type: input
+          data_type: int16
+          precision: 1
+          unit_of_measurement: °C
+          device_class: Temperature
+          state_class: measurement
+          scale: 0.01
+          scan_interval: 10
+
+        - name: DK Kaeltemittel Temperatur
+          unique_id: daikin_kaeltemittel_temperatur
+          device_address: !secret daikin_modbus_slave
+          address: 44 # reg 45
+          input_type: input
+          data_type: int16
+          precision: 1
+          unit_of_measurement: °C
+          device_class: Temperature
+          state_class: measurement
+          scale: 0.01
+          scan_interval: 10
+
+        - name: DK Durchflussrate
+          unique_id: daikin_durchflussrate
+          device_address: !secret daikin_modbus_slave
+          address: 48 # reg 49
+          input_type: input
+          data_type: int16
+          unit_of_measurement: l/min
+          scale: 0.01
+          precision: 1
+          scan_interval: 10
+
+        - name: DK Regler Temperatur
+          unique_id: daikin_regler_temperatur
+          device_address: !secret daikin_modbus_slave
+          address: 49 # reg 50
+          input_type: input
+          data_type: int16
+          precision: 1
+          unit_of_measurement: °C
+          device_class: Temperature
+          state_class: measurement
+          scale: 0.01
+          scan_interval: 10
+
+        - name: DK Stromverbrauch Waermepumpe
+          unique_id: daikin_stromverbrauch_wp
+          device_address: !secret daikin_modbus_slave
+          address: 50 # reg 51
+          input_type: input
+          data_type: int16
+          scale: 10
+          unit_of_measurement: W
+          scan_interval: 5
+
+        - name: DK Brauchwasserbetrieb
+          unique_id: daikin_brauchwasserbetrieb
+          device_address: !secret daikin_modbus_slave
+          address: 51 # reg 52
+          input_type: input
+          data_type: int16
+          scan_interval: 10
+
+        - name: DK Heizungsbetrieb
+          unique_id: daikin_heizungsbetrieb
+          device_address: !secret daikin_modbus_slave
+          address: 52 # reg 53
+          input_type: input
+          data_type: int16
+          scan_interval: 10
+
+  input_select:
+    set_dk_modus:
+      name: DK Modus
+      options:
+        - "Auto"
+        - "Heizen"
+        - "Kuehlen"
+
+    set_dk_smartgrid:
+      name: DK Smart Grid
+      options:
+        - "Kostenlos"
+        - "ErzwungenAus"
+        - "EmpfohlenEin"
+        - "ErzwungenEin"        
+        
+  input_number:
+    set_dk_power_limit_puffer:
+      name: DK Power Limit Puffer W
+      min: 0
+      max: 20000
+      step: 100
+
+    set_dk_power_limit:
+      name: DK Power Limit W
+      min: 0
+      max: 20000
+      step: 100
+
+  template:
+    - sensor:
+      - name: "DK Spreizung"
+        unique_id: daikin_spreizung
+        unit_of_measurement: "°C"
+        state_class: measurement
+        device_class: temperature
+        state: >
+          {% set vorlauf = states('sensor.dk_vorlauftemperatur_phe') | float(0) %}
+          {% set ruecklauf = states('sensor.dk_ruecklauftemperatur') | float(0) %}
+          {{ (vorlauf - ruecklauf) | round(1) }}
+            
+    - sensor:
+      - name: "DK Heizleistung berechnet"
+        unique_id: daikin_heizleistung_calc
+        unit_of_measurement: "W"
+        state_class: measurement
+        device_class: power
+        state: >
+          {% set volumenstrom = states('sensor.dk_durchflussrate') | float(0) %}
+          {% set vorlauf = states('sensor.dk_vorlauftemperatur_phe') | float(0) %}
+          {% set ruecklauf = states('sensor.dk_ruecklauftemperatur') | float(0) %}
+          {% set delta_t = [vorlauf - ruecklauf, 0] | max %}
+          {{ (volumenstrom * 60 * 1.16 * delta_t) | round(2) }}
+
+    - sensor:
+      - name: "DK COP"
+        unique_id: daikin_cop
+        unit_of_measurement: ""
+        state_class: measurement
+        state: >
+          {% set wp_aktiv = is_state('binary_sensor.dk_heizt', 'on') %}
+            {% set leistung_abgabe = states('sensor.dk_heizleistung_berechnet') | float(0) %}
+            {% set stromaufnahme = states('sensor.em3_wp_totalpower') | float(0) %}
+            {% if wp_aktiv and stromaufnahme > 0 %}
+              {{ (leistung_abgabe / stromaufnahme) | round(1) }}
+            {% else %}
+              0
+            {% endif %}
+    
+    - sensor:
+      - name: "DK COP Daily"
+        unique_id: dk_cop_daily
+        unit_of_measurement: ""
+        state_class: measurement
+        state: >
+          {% set heiz = states('sensor.dk_heizenergie_daily') | float(0) %}
+          {% set strom = states('sensor.em3_wp_energy_daily') | float(0) %}
+          {% if strom > 0 %}
+            {{ (heiz / strom) | round(2) }}
+          {% else %}
+            unavailable
+          {% endif %}
+
+    - sensor:
+      - name: "DK COP Monthly"
+        unique_id: dk_cop_monthly
+        unit_of_measurement: ""
+        state_class: measurement
+        state: >
+          {% set heiz = states('sensor.dk_heizenergie_monthly') | float(0) %}
+          {% set strom = states('sensor.em3_wp_energy_monthly') | float(0) %}
+          {% if strom > 0 %}
+            {{ (heiz / strom) | round(2) }}
+          {% else %}
+            unavailable
+          {% endif %}
+          
+    - binary_sensor:
+      - name: "DK heizt"
+        unique_id: dk_heizt
+        device_class: running
+        state: >
+          {{ states('sensor.dk_verdichter') | int == 1 }}
+
+  counter:
+    dk_starts:
+      name: DK Starts Counter
+      initial: 0
+      step: 1
+
+  sensor:
+    - platform: integration
+      unique_id: daikin_heizenergie_helper
+      name: DK Heizenergie Helper
+      source: sensor.dk_heizleistung_berechnet
+      unit_prefix: k
+      round: 2
+      method: left
+      unit_time: h
+
+    - platform: history_stats
+      name: "DK Laufzeit daily"
+      unique_id: daikin_laufzeit_daily
+      entity_id: binary_sensor.dk_heizt
+      state: 'on'
+      type: time
+      start: '{{ now().replace(hour=0, minute=0, second=0) }}'
+      end: '{{ now() }}'
+  
+  utility_meter:
+    dk_heizenergie_daily:
+      name: DK Heizenergie Daily
+      unique_id: dk_heizenergie_daily
+      source: sensor.dk_heizenergie_helper
+      cycle: daily
+      periodically_resetting: false
+      always_available: true
+
+    dk_heizenergie_monthly:
+      name: DK Heizenergie Monthly
+      unique_id: dk_heizenergie_monthly
+      source: sensor.dk_heizenergie_helper
+      cycle: monthly
+      periodically_resetting: false
+      always_available: true
+
+    dk_starts_daily:
+      name: DK Starts Daily
+      unique_id: dk_starts_daily
+      source: counter.dk_starts
+      cycle: daily
+      periodically_resetting: false
+      always_available: true
+
+    dk_starts_monthly:
+      name: DK Starts Monthly
+      unique_id: dk_starts_monthly
+      source: counter.dk_starts
+      cycle: monthly
+      periodically_resetting: false
+      always_available: true
+
+  automation:
+    - id: "automation_daikin_smartgrid_mode"
+      alias: "daikin smart grid mode"
+      description: "Daikin Update Smart Grid Modus"
+      triggers:
+        - trigger: state
+          entity_id:
+            - input_select.set_dk_smartgrid
+      conditions: []
+      variables:
+        grid_kostenlos: 0
+        grid_erzwungen_aus: 1
+        grid_empfohlen_ein: 2
+        grid_erzwungen_ein: 3
+      actions:
+        - action: modbus.write_register
+          data_template:
+            hub: DKHomeHub
+            slave: !secret daikin_modbus_slave
+            address: 55 # reg 56
+            value: >
+              {% if is_state('input_select.set_dk_smartgrid', "Kostenlos") %} 
+                {{grid_kostenlos}}
+              {% elif is_state('input_select.set_dk_smartgrid', "ErzwungenAus") %} 
+                {{grid_erzwungen_aus}}
+              {% elif is_state('input_select.set_dk_smartgrid', "EmpfohlenEin") %} 
+                {{grid_empfohlen_ein}}
+              {% elif is_state('input_select.set_dk_smartgrid', "ErzwungenEin") %} 
+                {{grid_erzwungen_ein}}
+              {% else %} 
+                {{grid_kostenlos}}
+              {% endif %}
+        - action: homeassistant.update_entity
+          # immediate update the sensor to reflect the new value, not waiting for the next scheduled update
+          data:
+            entity_id:
+              - sensor.daikin_smart_grid_sensor
+      mode: single
+
+    - id: "automation_daikin_mode"
+      alias: "daikin mode"
+      description: "Daikin Modus"
+      triggers:
+        - trigger: state
+          entity_id:
+            - input_select.set_dk_modus
+      conditions: []
+      variables:
+        modus_auto: 0
+        modus_heizen: 1
+        modus_kuehlen: 2
+      actions:
+        - action: modbus.write_register
+          data_template:
+            hub: DKHomeHub
+            slave: !secret daikin_modbus_slave
+            address: 55 # reg 56
+            value: >
+              {% if is_state('input_select.set_dk_modus', "Auto") %} 
+                {{modus_auto}}
+              {% elif is_state('input_select.set_dk_modus', "Heizen") %} 
+                {{modus_heizen}}
+              {% elif is_state('input_select.set_dk_modus', "Kuehlen") %} 
+                {{modus_kuehlen}}
+              {% else %} 
+                {{modus_auto}}
+              {% endif %}
+        - action: homeassistant.update_entity
+          # immediate update the sensor to reflect the new value, not waiting for the next scheduled update
+          data:
+            entity_id:
+              - sensor.daikin_modus_sensor
+      mode: single
+
+    - id: "automation_daikin_smart_power_limit"
+      alias: "daikin smart grid power limit"
+      description: "Updates smart grid power limit"
+      triggers:
+        - trigger: state
+          entity_id:
+            - input_number.set_dk_power_limit
+      conditions: []
+      actions:
+        - action: modbus.write_register
+          data_template:
+            hub: DKHomeHub
+            slave: !secret daikin_modbus_slave
+            address: 57 # reg 58
+            value: "{{ states('input_number.set_dk_power_limit') | int *0.1}}"
+        - action: homeassistant.update_entity
+          # immediate update the sensor to reflect the new value, not waiting for the next scheduled update
+          data:
+            entity_id:
+              - sensor.daikin_smart_grid_leistungsbegrenzung_sensor
+      mode: single
+
+    - id: "automation_daikin_smart_power_limit_puffer"
+      alias: "daikin smart grid power limit puffer"
+      description: "Updates smart grid power limit puffer"
+      triggers:
+        - trigger: state
+          entity_id:
+            - input_number.set_dk_power_limit_puffer
+      conditions: []
+      actions:
+        - action: modbus.write_register
+          data_template:
+            hub: DKHomeHub
+            slave: !secret daikin_modbus_slave
+            address: 56 # reg 57
+            value: "{{ states('input_number.set_dk_power_limit_puffer') | int *0.1}}"
+        - action: homeassistant.update_entity
+          # immediate update the sensor to reflect the new value, not waiting for the next scheduled update
+          data:
+            entity_id:
+              - sensor.daikin_smart_grid_leistungsbegrenzung_puffer_sensor
+      mode: single
+
+    - id: "automation_daikin_starts_counter_increment"
+      alias: "DK Start Counter Increment"
+      trigger:
+        - platform: state
+          entity_id: binary_sensor.dk_heizt
+          from: 'off'
+          to: 'on'
+      action:
+        - service: counter.increment
+          target:
+            entity_id: counter.dk_starts
